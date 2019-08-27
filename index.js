@@ -1,27 +1,47 @@
 const express = require("express")
-const {json} = require("body-parser")
 const app = express()
+const {json} =  require("body-parser")
+const {Word} = require("./word.model")
 
 app.use(json())
-
-app.get("/cong/:a/:b" , (req,res) => {
-    const {a , b} = req.params
-    if(isNaN(a) || isNaN(b)){
-        res.send({success : false , message : "Khong phai là số"})
-        return res.end()
-    }
-    const ketqua = +a + +b
-    res.send({success : true , tong : ketqua})
-
+// truong hoac round
+app.get("/word" , (req , res) => {
+    Word.find({})
+    .then(words => res.send({success : true , words}))
+    .catch(error => res.send({success : false , message : error}))
 })
-app.post("/chia" , (req,res) => {
-    const {a , b} = req.body
-    if(isNaN(a) || isNaN(b)){
-        res.send({success : false , message : "Khong phai là số"})
-        return res.end()
-    }
-    const ketqua = +a / +b
-    res.send({success : true , chia : ketqua})
 
+//insert 
+app.post("/word" , (req , res) => {
+    const {en , vn } = req.body
+    if(en.trim() === '' || vn.trim() === ''){
+        return res.send({success : false , message : "Emty value"})
+    }
+    const newword = new Word({en , vn})
+    newword.save()
+    .then(w => res.send({success : true , word : w}))
+    .catch(error => res.send({success : false , message : error}))
 })
-app.listen("3000" , () => console.log("Server started"))
+//update
+app.put("/word/:_id" , (req , res) => {
+    const {_id} = req.params
+    const {isMemorized} = req.body
+    if(_id.trim() === '' || isMemorized === null){
+        return res.send({success : false , message : "Emty value"})
+    }
+    Word.findByIdAndUpdate(_id,{isMemorized},{new : true})
+    .then(w => res.send({success : true , word : w}))
+    .catch(error => res.send({success : false , message : error}))
+})
+//delete
+app.delete("/word/:_id" , (req , res) => {
+    const {_id} = req.params
+    if(_id.trim() === ''){
+        return res.send({success : false , message : "Emty value"})
+    }
+    Word.findByIdAndDelete(_id)
+    .then(w => res.send({success : true , word : w}))
+    .catch(error => res.send({success : false , message : error}))
+})
+
+app.listen("3000",() => console.log("Server started"))
