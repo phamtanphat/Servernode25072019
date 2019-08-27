@@ -45,3 +45,5 @@ app.delete("/word/:_id" , (req , res) => {
 })
 
 app.listen("3000",() => console.log("Server started"))
+
+http://server2301.herokuapp.com/word
