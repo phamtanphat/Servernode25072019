@@ -55,8 +55,9 @@ async function dientichHinhchunhat(a , b){
     return thuong
 }
 dientichHinhchunhat(10 , 'a')
-.then(value => console.log(value))
 .catch(error => console.log(error))
+.then(value => console.log(value))
+
 
 
 
